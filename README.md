@@ -21,16 +21,13 @@ pip3 install scipy
 pip3 install numpy==1.19.1
 ```
 
-### 2. Getting TOPOS ready (this I need to check if what I say is true)
+### 2. Getting TOPOS ready
 
 1. Download TOPOS repository<br>
-2. Unzip the file, cd into the `topos` directory and make TOPOS executable
+2. Unzip the file ```unzip TOPOS-main.zip```
 
-```
-unzip topos.zip
-cd topos
-sudo chmod +x topos
-```
+If you want to play with the datasets used in the study,<br>
+you need to separately downloaded the playground.tar.gz from Github
 
 
 Usage
