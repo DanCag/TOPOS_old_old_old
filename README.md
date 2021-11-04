@@ -1,7 +1,7 @@
 TOPOS: Tissue-of-Origin Predictor of Onco-Samples
 =================================================
 
-A versatile machine-learning classifier based on SVMs to predict the cancer type of primary, metastasis, cell line samples and circulating tumor cells.
+A versatile machine-learning classifier based on SVMs to predict the cancer type of primary, metastasis, cell line and circulating tumor cells samples.
 
 Installation
 ------------
@@ -11,7 +11,7 @@ If you have them installed, you can go directly to step 2.
 
 ### 1. Installing required python modules
 
-Commands that you need to execute in order to get Ubuntu 20.04 LTS ready after a fresh installation.
+Commands that you need to execute in order to get your system ready.
 
 ```
 sudo apt install python3-pip
@@ -21,16 +21,14 @@ pip3 install scipy
 pip3 install numpy==1.19.1
 ```
 
-### 2. Getting TOPOS ready (this I need to check if what I say is true)
+### 2. Getting TOPOS ready
 
 1. Download TOPOS repository<br>
-2. Unzip the file, cd into the `topos` directory and make TOPOS executable
+2. Unzip the file ```unzip TOPOS-main.zip```
+3. Separately download the `required_data/training.tar.gz` from Github
 
-```
-unzip topos.zip
-cd topos
-sudo chmod +x topos
-```
+If you want to play with the datasets used in the study,<br>
+you need to separately download the `playground.tar.gz` from Github
 
 
 Usage
@@ -45,7 +43,7 @@ Required positional parameters:
 * ***normalization***: strategy used to scale user's data.<br>
 
 > Normalization consists of sample-wise + feature-wise standardization.<br>
-First, user's data are scaled sample-wise tp remove any artificial variation<br>
+First, user's data are scaled sample-wise to remove any artificial variation<br>
 due to biases in library preparation, sequencing method, batch effects and so on.<br>
 Afterwards, the sample-wise scaled matrix is normalized on the features' level<br>
 so that each feature has a mean of 0 and a standard deviation of 1 across samples.<br>
@@ -60,7 +58,7 @@ In both of them, the first step consists of standardizing the gene expression ma
 enforcing each sample to have _mean_ = 0 and _standard deviation_ = 1.<br>
 
 Afterwards, if ``` train ```, the feature-wise standardization is performed using<br>
-the mean and sd of the sample-wise standardize training matrix.<br>
+the mean and sd of the sample-wise standardized training matrix.<br>
  
 On the other hand, the ``` self ``` option scale the user's data independently of the training data.
 
@@ -85,16 +83,35 @@ If ``` True ```, an explanation for each step performed will be printed to ``` s
 For example, if ```--n_genes``` is 200, TOPOS will select the 200 most informative genes according to its gene ranking ,<br> 
 and will use as many of those genes as are present in the user's data. <br>
 If the selected number of genes is larger than 494, then TOPOS will select less genes than the desired number because<br>
-after 494 we features are not ranked one by one but considering a larger step. For instance,<br>
+after 494 features are not ranked one by one but considering progressively larger steps. For instance,<br>
 if the user selects 500 features,TOPOS will take the best 494 genes.<br>
 If no number is defined, the overlap between training and testing matrix is taken as the number of features.<br>
-We recommend to set ```--n_genes``` lower than 500 so that TOPOS' execution time stays short.<br>
 
-Example
--------
+TOPOS training is fast (also when considering all 14369 features).<br>
+Nonetheless, we decided to implement the possibility for the user to store and reuse a specific trained model<br>
+to save time when he wants to apply that model to many datasets.
 
-Picking the top 110 features, scaling the user's data in ```train``` mode and saving the predictions to `tests/P_met500_110-genes.tsv`.
+Examples
+--------
+
+1. Picking the top 110 features, scaling the user's data in ```train``` mode and saving the predictions to `P_met500_110-genes.tsv`.
 
 ```
-./topos.py --verbose True --n_genes 110 train ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./tests/executable_met500_110-genes_preds.tsv
+./topos.py --verbose True --n_genes 110 train ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_110-genes_preds.tsv
 ```
+
+*Runtime*: ~ 0.3 minute
+
+2. Picking all features, scaling the user's data in ```train``` mode and saving the predictions to `P_met500_genes.tsv`.<br>
+
+```
+./topos.py --verbose True train ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_preds.tsv
+```
+
+*Runtime*: ~ 2.5 minutes
+
+| | |
+| :----: | :----: |
+| **OS**     | Ubuntu 20.04.3 LTS |
+| **Memory** | 5.5 Gib     |
+| **Processor** | Intel® Core™ i5-8500T CPU @ 2.10GHz × 6 |
