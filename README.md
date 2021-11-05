@@ -28,7 +28,7 @@ pip3 install numpy (version I have used: 1.19.1)
 3. Separately download the `required_data/training.tar.gz` from Github
 
 If you want to play with the datasets used in the study,<br>
-you need to download the `playground.tar.gz` from Github
+you need to separately download the `playground.tar.gz` from Github
 
 
 Usage
