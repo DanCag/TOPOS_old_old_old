@@ -15,10 +15,10 @@ Commands that you need to execute in order to get your system ready.
 
 ```
 sudo apt install python3-pip
-pip3 install pandas
-pip3 install scikit-learn==0.23.2
-pip3 install scipy
-pip3 install numpy==1.19.1
+pip3 install pandas (version I have used: 1.0.5)
+pip3 install scikit-learn (version I have used: 0.23.2)
+pip3 install scipy (version I have used: 1.5.2)
+pip3 install numpy (version I have used: 1.19.1)
 ```
 
 ### 2. Getting TOPOS ready
@@ -94,22 +94,22 @@ to save time when user wants to apply that specific model to many datasets.
 * ***-s, --save_model***: allow user saving the model (it needs three pathways)<br>
                           If not None, TOPOS will save:
 
-   * array of genes used by the model
+   * array of genes used by the model (file extension must be '_.npy_')
    * table with mean and standard deviation:<br>
      Mean and sd are computed on sample-wise normalized training matrix<br>
      The features correspond to the overlap between training<br> 
-     and testing used when computing pre-trained model<br> 
-   * trained classifier 
+     and testing at the time the model was trained (file extension must be '_.pkl_') 
+   * trained classifier (file extension must be '_.pkl_') 
 
 * ***-l, --load_model***: allow user loading pre-trained model (it needs three pathways)<br>
                           If not None, TOPOS will load:    
-    * array of genes used by the pre-trained model
+    * array of genes used by the pre-trained model (file extension must be '_.npy_')
     * table with mean and standard deviation:<br>
       Mean and sd are computed on sample-wise normalized training matrix<br>
       The features correspond to the overlap between training<br> 
       and testing used when computing pre-trained model<br> 
-      and it is needed if normalization mode is set to "train"<br>
-    * pre-trained classifier
+      and it is needed if normalization mode is set to "train" (file extension must be '_.pkl_') 
+    * pre-trained classifier (file extension must be '_.pkl_')
 
 > Be aware that you can only use a pre-trained model<br>
 > if the dataset you are testing contains the genes the pre-trained model is trained on.
@@ -117,7 +117,7 @@ to save time when user wants to apply that specific model to many datasets.
 Examples
 --------
 
-1. Picking the top 110 features, scaling the user's data in ```train``` mode and saving the predictions.<br>
+1. Picking the top 110 features and scaling the user's data in ```train``` mode.<br>
 
 ```
 ./topos.py --verbose True --n_genes 110 train ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_110-genes_preds.tsv
@@ -125,7 +125,7 @@ Examples
 
 *Runtime*: ~ 0.3 minute
 
-2. Picking all features, scaling the user's data in ```self``` mode and saving the predictions.<br>
+2. Picking all features and scaling the user's data in ```self``` mode.<br>
 
 ```
 ./topos.py --verbose True self ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_all-genes_self.tsv
@@ -133,7 +133,7 @@ Examples
 
 *Runtime*: ~ 2.5 minutes
 
-3. Picking the top 110 features, scaling the user's data in ```train``` mode, saving the model.<br>
+3. Picking the top 110 features, scaling the user's data in ```train``` mode and saving the model.<br>
 
 ```
 ./topos.py --verbose True --n_genes 110 --save_model ./genes.npy ./mean_sd.pkl ./clf.pkl train ./playground/datasets/ctc/breast-GSE109761_tpm.tsv ./P_breast-GSE109761_110-genes_train.tsv
