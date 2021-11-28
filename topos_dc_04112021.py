@@ -1,10 +1,6 @@
 #! /usr/bin/env python3
 
 
-import time
-start_time = time.time()
-
-
 # --------------- #
 # Parse arguments #
 # --------------- #
@@ -20,9 +16,6 @@ parser = argparse.ArgumentParser(
                    'primaries, metastases, cell lines' +
                    'and circulating tumor cells.')
     )
-
-# add_argument() method is what we use to specify 
-# which command-line options the program will accept.
 
 # verbosity (optional argument)
 parser.add_argument(
@@ -94,7 +87,7 @@ parser.add_argument(
 parser.add_argument(
     'input_matrix',
     help = (
-        'Input tsv file with data of cancer samples to predict.\n' + 
+        'Path of gene expression file (.tsv).\n' + 
         'Rows are samples, columns are genes (Entrez ids).\n' + 
         'Expression values must be TPM.'
         )
@@ -103,11 +96,11 @@ parser.add_argument(
 # output path
 parser.add_argument(
     'output_predictions', 
-     help = 'Output tsv file with cancer type predictions for samples.'
+     help = 'Path of output prediction file.'
      )
 
 
-# parse_args() method returns some data from the options specified
+# return some data from the options specified
 args = parser.parse_args()
 
 
@@ -233,7 +226,7 @@ df_user.columns = [str(elem) for elem in df_user.columns]
 if args.load_model is None:
 
     # if we load a pre-trained model, 
-    # the number of genes depends on it
+    # the number of genes depends on the loaded model
 
     if args.n_genes is not None:
 
@@ -350,7 +343,7 @@ if args.load_model is None:
             (mean_sd_train_df.loc[X_train_sw.columns, 'sd'])
             )
 
-    # call normalized testing set as 'X_train_scl'
+    # call normalized training set as 'X_train_scl'
     X_train_scl = X_train_sw_gw
 
     if args.save_model is not None:
@@ -465,9 +458,8 @@ if args.load_model is None:
             '3. Trained classifier on {} genes\n'.format(X_user_scl.shape[1]),
             '----------------------------------\n\n',
             'This number can be\n\n',
-            'a) bigger if "n_genes" option is not defined\n\n', 
-            '   This is because the overlap between training\n',
-            '   and testing matrix will be considered.\n\n',
+            'a) the overlap between training and testing matrix\n', 
+            '   if "n_genes" option is not defined\n\n', 
             'b) smaller than the selected number ({})\n'.format(args.n_genes),
             '  if genes in the training matrix are not provided in the user\'s matrix,\n', 
             '  or if the selected number of genes is larger than 494.\n\n',
@@ -538,7 +530,3 @@ if args.verbose:
         '...\n\n', 
         '!!! Thank you for using TOPOS !!!\n', 
         flush = True)
-        
-        
-print("--- %s seconds ---" % (time.time() - start_time))
-
