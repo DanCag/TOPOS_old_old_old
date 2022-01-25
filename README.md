@@ -10,13 +10,18 @@ Get TOPOS ready
 You need to have Conda installed as a prerequisite.
 
 1. Download TOPOS repository
-2. Unzip the file: `unzip topos.zip`
-3. Go into topos directory: `cd topos`
-4. Create the conda environment: `conda env create -f ./topos.yml `
-5. Make TOPOS executable: `sudo chmod +x topos.py`
+2. Separately download the compressed archive `TOPOS/required_data/training.tar.gz`
+3. Unzip the file: `unzip TOPOS-main.zip`
+4. Go into topos directory: `cd TOPOS-main`
+5. Extract the compressed archive `training.tar.gz` into `TOPOS-main/required_data` directory 
+(you should see a new directory called `training` after doing this)
+6. Make TOPOS executable: `sudo chmod +x topos.py`
+7. Create the conda environment: `conda env create -f ./topos.yml`
+8. Activate the environment `conda activate TOPOS`
 
 If you want to play with the datasets used in the study,
 you need to separately download the `playground.tar.gz` file from Github
+
 
 Usage
 -----
