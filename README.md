@@ -3,157 +3,165 @@ TOPOS: Tissue-of-Origin Predictor of Onco-Samples
 
 A versatile machine-learning classifier based on SVMs to predict the cancer type of primary, metastasis, cell line and circulating tumor cells samples.
 
-Installation
-------------
+Prerequisites
+-------------
 
-If you don't have the required python3 modules installed (pandas, scikit-learn and scipy), go to step 1.<br>
-If you have them installed, you can go directly to step 2.
+You need to have Conda installed.
 
-### 1. Installing required python modules
 
-Commands that you need to execute in order to get your system ready.
+### 1. Getting TOPOS ready
 
-```
-sudo apt install python3-pip
-pip3 install pandas (version I have used: 1.0.5)
-pip3 install scikit-learn (version I have used: 0.23.2)
-pip3 install scipy (version I have used: 1.5.2)
-pip3 install numpy (version I have used: 1.19.1)
-```
+1. Download TOPOS repository
+2. Unzip the file: `unzip topos.zip`
+3. Go into topos directory: `cd topos`
+4. Create the conda environment: `conda env create -f ./topos.yml `
+5. Make TOPOS executable: `sudo chmod +x topos.py`
 
-### 2. Getting TOPOS ready
-
-1. Download TOPOS repository<br>
-2. Unzip the file ```unzip TOPOS-main.zip```
-3. Separately download the `required_data/training.tar.gz` file from Github
-
-If you want to play with the datasets used in the study,<br>
+If you want to play with the datasets used in the study,
 you need to separately download the `playground.tar.gz` file from Github
-
 
 Usage
 -----
 
 ```
-./topos [-h, --help] [-v, --verbose] [-n, --n_genes] [-s, --save_model] [-l, --load_model] normalization input_matrix output_predictions
+./topos.py [-h, --help] [-n, --n_genes] [-s, --save_model] [-l, --load_model] normalization input_matrix output_predictions
 ```
 
 Required positional parameters:
 
-* ***normalization***: strategy used to scale user's data.<br>
+* **normalization**
 
-Normalization consists of sample-wise + feature-wise standardization.<br>
-First, user's data are standardized sample-wise to remove any artificial variation<br>
-due to biases in library preparation, sequencing method, batch effects and so on.<br>
-Afterwards, the sample-wise scaled matrix is normalized on the features' level<br>
-so that each feature has a mean of 0 and a standard deviation of 1 across samples.<br>
-These two steps maintain numberical stability, avoid giving more weigth to features with larger variation<br>
-and improve the speed of convergence of the optimization algorithm.<br> 
+Normalization consists of sample-wise + feature-wise standardization.
+
+First, user's data are standardized sample-wise to remove any artificial variation
+due to biases in library preparation, sequencing method, batch effects and so on.
+Afterwards, the sample-wise scaled matrix is normalized on the features' level
+so that each feature has a mean of 0 and a standard deviation of 1 across samples.
+These two steps maintain numberical stability, avoid giving more weigth to features with larger variation
+and improve the speed of convergence of the optimization algorithm. 
 
 The two possible values are
- - ``` train ``` 
- - ``` self ```
+ - `train` 
+ - `self`
 
-In both of them, the first step consists of standardizing the gene expression matrix sample-wise,<br>
-enforcing each sample to have _mean_ = 0 and _standard deviation_ = 1.<br>
+In both of them, the first step consists of standardizing the gene expression matrix sample-wise,
+enforcing each sample to have _mean_ = 0 and _standard deviation_ = 1.
 
-Afterwards, if ``` train ```, the feature-wise standardization is performed using<br>
+Afterwards, if `train`, the feature-wise standardization is performed using
 the mean and sd of the sample-wise standardized training matrix.<br>
+**Please note that TOPOS was run with `train` flag in all analyses of the manuscript**
  
-On the other hand, the ``` self ``` option scales the user's data independently of the training data.
+On the other hand, the `self` option scales the user's data independently of the training data.
 
-* ***input\_matrix***: tab-separated file (tsv) with user's data in the following format:<br>
-rows are samples and columns are genes (named with Entrez ids).<br>
+* **input\_matrix**<br>
+Tab-separated file (tsv) with user's data in the following format:
+
+| | | | | |
+| :----:  | :----: | :----: | :----: | :----: |
+|         | gene_1 | gene_2 | ...    | gene_n | 
+| sample1 |
+| sample2 |
+| ...     | 
+| samplen |
+
+Rows are samples and columns are genes (named with Entrez ids).<br>
 Columns and samples must be named, so there will be a column and a row index.<br>
 Expression values must be provided in TPM.<br>
-You can find the input files used in the study in the folder ``` ./playground/datasets/ ```.<br>
+You can find the input files used in the study in the folder `./playground/datasets/`.
  
-* ***output\_predictions***: path where to write the tab-separated file (tsv) with the predictions.<br>
+* **output\_predictions**<br>
+Path where to write the tab-separated file (tsv) with the predictions.<br>
 Sample names will be maintained and predictions will be provided in OncoTree codes.<br>
- 
- 
+
 Optional positional parameters:
  
-* ***-h, --help***: shows the basic usage and a description of each parameter.
- 
-* ***-v, --verbose***: control the verbosity of execution.<br>
-If ``` True ```, an explanation for each step performed will be printed to ``` stdout ```.
+* **-h, --help**<br>
+Shows the basic usage and a description of each parameter.
 
-* ***-n, --n_genes*** : number of genes to be used in the training and prediction phase on the user's data.<br>
-For example, if ```--n_genes``` is 200, TOPOS will select the 200 most informative genes according to its gene ranking ,<br> 
-and will use as many of those genes as are present in the user's data. <br>
-If the selected number of genes is larger than 494, then TOPOS will select less genes than the desired number<br>
-because after 494, features are not ranked one by one but considering progressively larger steps.<br>
-For instance, if the user selects 500 features,TOPOS will take the best 494 genes.<br>
-If no number is defined, the overlap between training and testing matrix is taken as the number of features.<br>
+* **-n, --n_genes**<br>
+Number of genes to be used in the training and prediction phase on the user's data.
 
-TOPOS training is fast (also when considering all 14369 features).<br>
-Nonetheless, we decided to implement the option of storing and reusing a specific trained model<br>
+> If, for instance, ```--n_genes``` is 200, TOPOS will select the 200 most informative genes
+according to its gene ranking and will use as many of those genes as are present in the user's data.
+If the selected number of genes is larger than 494, then TOPOS will select less genes than the desired number
+because after 494, features are not ranked one by one but considering progressively larger steps.
+For instance, if the user selects 500 features,TOPOS will take the best 494 genes.
+If no number is defined, the overlap between training and testing matrix is taken as the number of features.
+
+TOPOS' training is fast (also when considering all 14369 features).<br>
+Nonetheless, we decided to implement the option of storing and reusing a specific trained model
 to save time when user wants to apply that specific model to many datasets.
 
-* ***-s, --save_model***: allow user saving the model (user has to specify three output paths)<br>
-                          If not None, TOPOS will save:
+* **-s, --save_model**<br>
+Allow user saving the model (user has to specify three output paths)<br>
+If not None, TOPOS will save:
 
-   * path of array of genes used by the model (file extension must be '_.npy_')
-   * path of table with mean and standard deviation:<br>
+   * path of array of genes used by the model (file extension must be `.npy`)
+   * path of table with mean and standard deviation:
+   
      Mean and sd are computed on sample-wise normalized training matrix<br>
      The features correspond to the overlap between training and testing<br>
-     at the time the model was trained (file extension must be '_.pkl_') 
-   * path of trained classifier (file extension must be '_.pkl_') 
+     at the time the model was trained (file extension must be `.pkl`) 
+   * path of trained classifier (file extension must be `.pkl`) 
 
-* ***-l, --load_model***: allow user loading pre-trained model (user has to specify three input paths)<br>
-                          If not None, TOPOS will load:
+* **-l, --load_model**<br>
+Allow user loading pre-trained model (user has to specify three input paths)<br>
+If not None, TOPOS will load:
                           
-    * path of array of genes used by the pre-trained model (file extension must be '_.npy_')
-    * path of table with mean and standard deviation:<br>
-      Mean and sd are computed on sample-wise normalized training matrix<br>
-      The features correspond to the overlap between training<br> 
-      and testing used when computing pre-trained model<br> 
-      and it is needed if normalization mode is set to "train" (file extension must be '_.pkl_') 
-    * path of pre-trained classifier (file extension must be '_.pkl_')
+   * path of array of genes used by the pre-trained model (file extension must be `.npy`)
+   * path of table with mean and standard deviation:
+   
+     Mean and sd are computed on sample-wise normalized training matrix<br>
+     The features correspond to the overlap between training and testing used when computing pre-trained model<br>.
+     It is needed if normalization mode is set to "train" (file extension must be `.pkl`) 
+   * path of pre-trained classifier (file extension must be `.pkl`)
 
-> Be aware that you can only use a pre-trained model<br>
-> if the dataset you are testing contains the genes the pre-trained model is trained on.
+> Be aware that you can only use a pre-trained model if the dataset you are testing
+contains the genes the pre-trained model is trained on.
+
 
 Examples
 --------
 
-1. Picking the top 110 features and scaling the user's data in ```train``` mode.<br>
+1. Picking the top 110 features and scaling the user's data in `train` mode.
 
 ```
-./topos.py --verbose True --n_genes 110 train ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_110-genes_preds.tsv
+./topos.py --n_genes 110 train ./playground/datasets/met500_testing/met500_testing_tpm.tsv ./P_met500_110-genes_preds.tsv
 ```
 
 *Runtime*: ~ 0.3 minute
 
-2. Picking all features and scaling the user's data in ```self``` mode.<br>
+
+2. Picking all features and scaling the user's data in `self` mode.
 
 ```
-./topos.py --verbose True self ./playground/datasets/prim-met-lines/met500/met500_testing_tpm.tsv ./P_met500_all-genes_self.tsv
+./topos.py self ./playground/datasets/met500_testing/met500_testing_tpm.tsv ./P_met500_all-genes_self.tsv
 ```
 
 *Runtime*: ~ 2.5 minutes
 
-3. Picking the top 110 features, scaling the user's data in ```train``` mode and saving the model.<br>
+
+3. Picking the top 110 features, scaling the user's data in `train` mode and saving the model.
 
 ```
-./topos.py --verbose True --n_genes 110 --save_model ./genes.npy ./mean_sd.pkl ./clf.pkl train ./playground/datasets/ctc/breast-GSE109761_tpm.tsv ./P_breast-GSE109761_110-genes_train.tsv
+./topos.py --n_genes 110 --save_model ./genes.npy ./mean_sd.pkl ./clf.pkl train ./playground/datasets/ctc/breast-GSE109761_tpm.tsv ./P_breast-GSE109761_110-genes_train.tsv
 ```
 *Runtime*: ~ 0.3 minute
 
-4. Picking the top 110 features, scaling the user's data in ```train``` mode, loading the model.<br>
+
+4. Picking the top 110 features, scaling the user's data in `train` mode, loading the model.
 
 ```
-./topos.py --verbose True --n_genes 110 --load_model ./genes.npy ./mean_sd.pkl ./clf.pkl train ./playground/datasets/ctc/breast-GSE111065_tpm.tsv ./P_breast-GSE111065_110-genes_train.tsv
+./topos.py --n_genes 110 --load_model ./genes.npy ./mean_sd.pkl ./clf.pkl train ./playground/datasets/ctc/breast-GSE111065_tpm.tsv ./P_breast-GSE111065_110-genes_train.tsv
 ```
 
 *Runtime*: ~ 0.1 minute<br><br>
 
-
-Runtimes are estimated on the following machine:<br>
+Runtimes are estimated on the following machine:
 
 | | |
 | :----: | :----: |
 | **OS**     | Ubuntu 20.04.3 LTS |
 | **Memory** | 5.5 Gib     |
 | **Processor** | Intel® Core™ i5-8500T CPU @ 2.10GHz × 6 |
+
