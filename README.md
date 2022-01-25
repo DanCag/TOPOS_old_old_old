@@ -3,13 +3,11 @@ TOPOS: Tissue-of-Origin Predictor of Onco-Samples
 
 A versatile machine-learning classifier based on SVMs to predict the cancer type of primary, metastasis, cell line and circulating tumor cells samples.
 
-Prerequisites
--------------
 
-You need to have Conda installed.
+Get TOPOS ready
+---------------
 
-
-### 1. Getting TOPOS ready
+You need to have Conda installed as a prerequisite.
 
 1. Download TOPOS repository
 2. Unzip the file: `unzip topos.zip`
