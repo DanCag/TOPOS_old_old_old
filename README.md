@@ -12,11 +12,12 @@ You need to have Conda installed as a prerequisite.
 1. Download TOPOS repository: `git clone https://github.com/DanCag/TOPOS`
 4. Go into topos directory: `cd TOPOS`
 5. Extract the compressed archive `training.tar.gz` into `./required_data` directory:
-```
-tar xvf ./required_data/training.tar.gz -C ./required_data/
 
 ```
+tar xvf ./required_data/training.tar.gz -C ./required_data/
+```
 (you should see the new directory `./required_data/training` after doing this)
+
 6. Make TOPOS executable: `sudo chmod +x topos.py`
 7. Create the conda environment: `conda env create -f ./topos.yml`
 8. Activate the environment `conda activate TOPOS`
